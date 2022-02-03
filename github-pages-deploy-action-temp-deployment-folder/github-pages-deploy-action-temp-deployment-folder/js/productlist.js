@@ -1,5 +1,4 @@
 import { createApp } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.esm-browser.min.js';
-import pagination from './pagination.js';
 
 const site = 'https://vue3-course-api.hexschool.io/v2';
 const api_path = 'steve-vue';
@@ -9,9 +8,6 @@ let productModal = {};
 let delProductModal = {};
 
 const app = createApp({
-  components: {
-    pagination,
-  },
   data() {
     // 這裡務必使用 function return
     return {
@@ -21,7 +17,6 @@ const app = createApp({
         imagesUrl: [],
       },
       isNew: false,
-      pagination: {}, // 分頁資料
     };
   },
   methods: {
@@ -44,9 +39,8 @@ const app = createApp({
     },
 
     // 取得左方列表
-    getProducts(page = 1) {
-      // query 參數
-      const url = `${site}/api/${api_path}/admin/products/?page=${page}`;
+    getProducts() {
+      const url = `${site}/api/${api_path}/admin/products/all`;
 
       axios
         .get(url)
@@ -58,9 +52,6 @@ const app = createApp({
           Object.values(this.products).forEach((product) => {
             // console.log(product);
           });
-
-          // 分頁資料
-          this.pagination = res.data.pagination;
         })
         .catch((err) => {
           console.log(err.response);
