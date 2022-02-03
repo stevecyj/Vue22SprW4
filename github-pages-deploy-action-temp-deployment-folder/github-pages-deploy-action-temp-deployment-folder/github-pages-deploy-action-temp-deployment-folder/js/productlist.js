@@ -1,5 +1,4 @@
 import { createApp } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.esm-browser.min.js';
-import pagination from './pagination.js';
 
 const site = 'https://vue3-course-api.hexschool.io/v2';
 const api_path = 'steve-vue';
@@ -9,9 +8,6 @@ let productModal = {};
 let delProductModal = {};
 
 const app = createApp({
-  components: {
-    pagination,
-  },
   data() {
     // 這裡務必使用 function return
     return {
@@ -21,7 +17,6 @@ const app = createApp({
         imagesUrl: [],
       },
       isNew: false,
-      pagination: {}, // 分頁資料
     };
   },
   methods: {
@@ -43,10 +38,9 @@ const app = createApp({
         });
     },
 
-    // 取得列表
-    getProducts(page = 1) {
-      // query 參數
-      const url = `${site}/api/${api_path}/admin/products/?page=${page}`;
+    // 取得左方列表
+    getProducts() {
+      const url = `${site}/api/${api_path}/admin/products/all`;
 
       axios
         .get(url)
@@ -58,9 +52,6 @@ const app = createApp({
           Object.values(this.products).forEach((product) => {
             // console.log(product);
           });
-
-          // 分頁資料
-          this.pagination = res.data.pagination;
         })
         .catch((err) => {
           console.log(err.response);
@@ -73,7 +64,7 @@ const app = createApp({
       this.singleProduct = item;
     },
 
-    // open modal，判斷新增或編輯
+    // open modal，判斷新增或
     openModal(status, product) {
       switch (status) {
         case 'isNew':
@@ -134,11 +125,6 @@ const app = createApp({
           console.log(err.response);
         });
     },
-
-    // 清除單筆資料
-    clearSingleProduct() {
-      this.singleProduct = { imagesUrl: [] };
-    },
   },
   mounted() {
     this.checkLogin();
@@ -152,29 +138,9 @@ const app = createApp({
     });
 
     // ref for productModal
-    // this.$refs.productModal.addEventListener('hidden.bs.modal', (event) => {
-    //   this.singleProduct = { imagesUrl: [] }; // productModal 關閉時清空資料
-    //   this.getProducts();
-    // });
-  },
-});
-
-app.component('productModal', {
-  props: ['singleProduct', 'isNew'],
-  template: `#templateForProductModal`,
-  data() {
-    return {
-      innerProduct: {
-        imagesUrl: [],
-      },
-    };
-  },
-  methods: {},
-  mounted() {
-    // ref for productModal
     this.$refs.productModal.addEventListener('hidden.bs.modal', (event) => {
-      this.$emit('clear-single-product'); // productModal 關閉時清空資料
-      console.log(123);
+      this.singleProduct = { imagesUrl: [] }; // productModal 關閉時清空資料
+      this.getProducts();
     });
   },
 });
